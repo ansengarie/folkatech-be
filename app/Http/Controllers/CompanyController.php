@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CompanyRequest;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -22,14 +23,9 @@ class CompanyController extends Controller
     }
 
     // Menyimpan data Company
-    public function store(Request $request)
+    public function store(CompanyRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required',
-            'email' => 'nullable|email',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'website' => 'nullable|url',
-        ]);
+        $validated = $request->validated();
 
         $logoPath = null;
         if ($request->hasFile('logo')) {
@@ -59,18 +55,12 @@ class CompanyController extends Controller
     }
 
     // Mengupdate data Company
-    public function update(Request $request, Company $company)
+    public function update(CompanyRequest $request, Company $company)
     {
-        $validated = $request->validate([
-            'name' => 'required',
-            'email' => 'nullable|email',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'website' => 'nullable|url',
-        ]);
+        $validated = $request->validated();
 
         $logoPath = $company->logo;
         if ($request->hasFile('logo')) {
-            // Hapus logo lama jika ada
             if ($logoPath) {
                 Storage::delete('public/' . $logoPath);
             }

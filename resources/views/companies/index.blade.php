@@ -18,6 +18,7 @@
                     <table class="w-full text-center border border-collapse border-gray-300">
                         <thead class="bg-gray-200">
                             <tr>
+                                <th class="p-2 border">Logo</th>
                                 <th class="p-2 border">Name</th>
                                 <th class="p-2 border">Email</th>
                                 <th class="p-2 border">Website</th>
@@ -27,6 +28,13 @@
                         <tbody>
                             @forelse ($companies as $company)
                                 <tr>
+                                    <td class="flex justify-center p-2 text-center border">
+                                        @if ($company->logo)
+                                            <img src="{{ asset('storage/' . $company->logo) }}" alt="Logo" class="object-cover w-16 h-16 ">
+                                        @else
+                                            <span class="text-gray-500">No Logo</span>
+                                        @endif
+                                    </td>
                                     <td class="p-2 border">{{ $company->name }}</td>
                                     <td class="p-2 border">{{ $company->email }}</td>
                                     <td class="p-2 border">

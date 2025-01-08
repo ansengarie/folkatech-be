@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\EmployeeRequest;
 use Illuminate\Http\Request;
 use App\Models\Employee;
 use App\Models\Company;
@@ -20,17 +21,9 @@ class EmployeeController extends Controller
          return view('employees.create', ['employee' => null, 'companies' => $companies]);
     }
 
-    public function store(Request $request)
+    public function store(EmployeeRequest $request)
     {
-        $validated = $request->validate([
-            'firstname' => 'required|string|max:255',
-            'lastname' => 'required|string|max:255',
-            'company_id' => 'required|exists:companies,id',
-            'email' => 'nullable|email',
-            'phone' => 'nullable|string|max:15',
-        ]);
-
-        Employee::create($validated);
+        Employee::create($request->validated());
 
         return redirect()->route('employees.index')->with('success', 'Employee created successfully.');
     }
@@ -46,18 +39,9 @@ class EmployeeController extends Controller
         return view('employees.edit', compact('employee', 'companies'));
     }
 
-    public function update(Request $request, Employee $employee)
+    public function update(EmployeeRequest $request, Employee $employee)
     {
-        $validated = $request->validate([
-            'firstname' => 'required|string|max:255',
-            'lastname' => 'required|string|max:255',
-            'company_id' => 'required|exists:companies,id',
-            'email' => 'nullable|email|max:255',
-            'phone' => 'nullable|string|max:15|regex:/^[0-9\-\(\)\/\+\s]*$/',
-        ]);
-
-
-        $employee->update($validated);
+        $employee->update($request->validated());
 
         return redirect()->route('employees.index')->with('success', 'Employee updated successfully.');
     }

@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\EmployeeRequest;
+use App\Mail\NewEmployeeNotification;
 use Illuminate\Http\Request;
 use App\Models\Employee;
 use App\Models\Company;
+use Illuminate\Support\Facades\Mail;
 
 class EmployeeController extends Controller
 {
@@ -23,10 +25,18 @@ class EmployeeController extends Controller
 
     public function store(EmployeeRequest $request)
     {
-        Employee::create($request->validated());
+        // Hanya membuat satu instance employee dan menyimpannya
+        $employee = Employee::create($request->validated());
+
+        // Kirim email ke admin perusahaan
+        $adminEmail = $employee->company->email;
+        if ($adminEmail) {
+            Mail::to($adminEmail)->send(new NewEmployeeNotification($employee));
+        }
 
         return redirect()->route('employees.index')->with('success', 'Employee created successfully.');
     }
+
 
     public function show(Employee $employee)
     {

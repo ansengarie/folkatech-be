@@ -10,14 +10,14 @@ class EmployeeController extends Controller
 {
     public function index()
     {
-        $employees = Employee::with('company')->paginate(10);
+        $employees = Employee::with('company:id,name')->paginate(10);
         return view('employees.index', compact('employees'));
     }
 
     public function create()
     {
         $companies = Company::all();
-        return view('employees.create', compact('companies'));
+         return view('employees.create', ['employee' => null, 'companies' => $companies]);
     }
 
     public function store(Request $request)
@@ -52,9 +52,10 @@ class EmployeeController extends Controller
             'firstname' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',
             'company_id' => 'required|exists:companies,id',
-            'email' => 'nullable|email',
-            'phone' => 'nullable|string|max:15',
+            'email' => 'nullable|email|max:255',
+            'phone' => 'nullable|string|max:15|regex:/^[0-9\-\(\)\/\+\s]*$/',
         ]);
+
 
         $employee->update($validated);
 
